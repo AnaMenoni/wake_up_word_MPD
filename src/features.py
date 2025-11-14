@@ -1,5 +1,13 @@
+"""
+Aquí se realiza la extracción de características para señales de audio.
+Transforma la señal preprocesada al dominio tiempo frecuencia mediante la STFT
+y calcula representaciones espectrales (espectrograma y mel-spectrogram) que
+resumen la distribución de energía en frecuencia a lo largo del tiempo. 
+"""
+
 import librosa
 import numpy as np
+
 
 def compute_stft(x, sr=16000, n_fft=512, hop_length=160, win_length=400):
     """
