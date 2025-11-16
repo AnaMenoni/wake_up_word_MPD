@@ -1,3 +1,4 @@
+import os
 from pydub import AudioSegment
 
 def convert_to_wav(input_path, output_path, target_sr=16000):
@@ -21,3 +22,22 @@ def convert_to_wav(input_path, output_path, target_sr=16000):
     # Exportar como WAV
     audio.export(output_path, format="wav")
 
+def batch_convert_raw_to_wav(raw_folder, wav_folder, target_sr=16000):
+    """
+    Convierte TODOS los archivos de data/raw/ a WAV 16 kHz mono,
+    usando convert_to_wav().
+    """
+    os.makedirs(wav_folder, exist_ok=True)
+
+    for filename in os.listdir(raw_folder):
+        if not filename.lower().endswith((".wav", ".mp3", ".m4a", ".ogg", ".flac", ".opus")):
+            continue  # ignora archivos no-audio
+
+        input_path = os.path.join(raw_folder, filename)
+        name_no_ext = os.path.splitext(filename)[0]
+        output_path = os.path.join(wav_folder, name_no_ext + ".wav")
+
+        convert_to_wav(input_path, output_path, target_sr)
+
+    print("Conversión en lote finalizada.")
+    
