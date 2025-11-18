@@ -1,8 +1,12 @@
 import os
 import pandas as pd
 
-positivo_folder = "data/positivo"
-negativo_folder = "data/negativo"
+positivo_folder = "../data/positivo"
+negativo_folder = "../data/negativo"
+raw_folder = "../data/raw"
+
+# Crear raw si no existe
+os.makedirs(raw_folder, exist_ok=True)
 
 rows = []
 
@@ -17,7 +21,7 @@ for f in os.listdir(negativo_folder):
         rows.append([f, 0])
 
 df = pd.DataFrame(rows, columns=["archivo", "clase"])
-df.to_csv("data/etiquetas.csv", index=False)
+df.to_csv("../data/etiquetas.csv", index=False)
 
 print("etiquetas.csv generado correctamente:")
 print(df)
@@ -25,7 +29,7 @@ print(df)
 
 import shutil
 
-raw_folder = "data/raw"
+raw_folder = "../data/raw"
 os.makedirs(raw_folder, exist_ok=True)
 
 # copiar positivos
