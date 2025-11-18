@@ -5,26 +5,35 @@ import pandas as pd
 from src.preprocess import preprocess_wav
 from src.features import compute_mel_spectrogram
 
-def load_dataset(wav_folder, etiquetas_csv):
+def load_dataset(wav_folder, etiquetas_csv, sr=16000):
     """
-    Carga todos los audios WAV y genera X (features) e y (etiquetas).
+    Carga audios WAV, los preprocesa y extrae features robustas.
+    Devuelve X (características) e y (etiquetas).
     """
+
     df = pd.read_csv(etiquetas_csv)
     X = []
     y = []
 
     for _, row in df.iterrows():
-        filepath = os.path.join(wav_folder, row['archivo'])
-        label = row['clase']
+        filename = row["archivo"]
+        label = row["clase"]
 
-        x = preprocess_wav(filepath)
-        mel = compute_mel_spectrogram(x)
+        filepath = os.path.join(wav_folder, filename)
 
-        # Aplanar el Mel-espectrograma
-        mel_flat = mel.flatten()[:4096]  # limitar tamaño
-        mel_flat = np.pad(mel_flat, (0, max(0, 4096 - len(mel_flat))), 'constant')
+        x = preprocess_wav(filepath, sr=sr)
 
-        X.append(mel_flat)
+        # Mel - espectrograma
+        mel = compute_mel_spectrogram(x, sr=sr)   # mel.shape = (n_mels, n_frames)
+
+        # 
+        mel_mean = mel.mean(axis=1)   # vector de tamaño n_mels
+        mel_std  = mel.std(axis=1)    # vector de tamaño n_mels
+
+        # vector final = concatenación (tamaño = 2*n_mels)
+        features = np.concatenate([mel_mean, mel_std])
+
+        X.append(features)
         y.append(label)
 
     return np.array(X), np.array(y)

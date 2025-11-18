@@ -1,7 +1,8 @@
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score
-from sklearn.linear_model import LogisticRegression
+#from sklearn.linear_model import LogisticRegression
 import joblib
+from sklearn.ensemble import RandomForestClassifier
 
 
 
@@ -9,10 +10,17 @@ def train_model(X, y, model_path="modelo.pkl"):
     # Entrena un clasificador simple para la detección de la wake-word
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=42, stratify=y
+        X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    model = LogisticRegression(max_iter=2000)
+    #model = LogisticRegression(max_iter=2000)
+
+    model = RandomForestClassifier(
+    n_estimators=400,
+    max_depth=None,
+    random_state=42
+    )   
+    
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
