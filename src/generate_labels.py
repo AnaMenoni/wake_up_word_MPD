@@ -1,47 +1,27 @@
 import os
 import pandas as pd
 
+wav_folder = "../data/wav"
 positivo_folder = "../data/positivo"
 negativo_folder = "../data/negativo"
-raw_folder = "../data/raw"
-
-# Crear raw si no existe
-os.makedirs(raw_folder, exist_ok=True)
 
 rows = []
 
-# procesar positivos
-for f in os.listdir(positivo_folder):
-    if f.lower().endswith((".wav", ".mp3", ".m4a", ".opus", ".ogg", ".flac")):
-        rows.append([f, 1])
+positivos_ori = {os.path.splitext(f)[0] for f in os.listdir(positivo_folder)}
+negativos_ori = {os.path.splitext(f)[0] for f in os.listdir(negativo_folder)}
 
-# procesar negativos
-for f in os.listdir(negativo_folder):
-    if f.lower().endswith((".wav", ".mp3", ".m4a", ".opus", ".ogg", ".flac")):
-        rows.append([f, 0])
+for filename in os.listdir(wav_folder):
+    if filename.endswith(".wav"):
+        base = os.path.splitext(filename)[0]
+
+        if base in positivos_ori:
+            rows.append([filename, 1])
+        elif base in negativos_ori:
+            rows.append([filename, 0])
+        else:
+            print("Advertencia: no se encontró etiqueta:", filename)
 
 df = pd.DataFrame(rows, columns=["archivo", "clase"])
 df.to_csv("../data/etiquetas.csv", index=False)
 
-print("etiquetas.csv generado correctamente:")
 print(df)
-
-
-import shutil
-
-raw_folder = "../data/raw"
-os.makedirs(raw_folder, exist_ok=True)
-
-# copiar positivos
-for f in os.listdir(positivo_folder):
-    src = os.path.join(positivo_folder, f)
-    dst = os.path.join(raw_folder, f)
-    shutil.copy(src, dst)
-
-# copiar negativos
-for f in os.listdir(negativo_folder):
-    src = os.path.join(negativo_folder, f)
-    dst = os.path.join(raw_folder, f)
-    shutil.copy(src, dst)
-
-print("Todos los archivos copiados a data/raw.")
