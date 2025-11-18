@@ -2,8 +2,8 @@ import os
 import librosa
 import numpy as np
 import pandas as pd
-from preprocess import preprocess_wav
-from features import compute_mel_spectrogram
+from src.preprocess import preprocess_wav
+from src.features import compute_mel_spectrogram
 
 def load_dataset(wav_folder, etiquetas_csv):
     """
